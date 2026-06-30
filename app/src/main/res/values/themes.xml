@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.MyApplication" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <!-- Tema de arranque para evitar parpadeo blanco antes del splash propio -->
+    <style name="Theme.MyApplication.Starting" parent="Theme.MyApplication">
+        <item name="android:windowBackground">@android:color/black</item>
+    </style>
+</resources>
