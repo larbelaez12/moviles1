@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.SportsBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -56,6 +57,7 @@ fun ChallengesScreen(
     onDeleteChallenge: (Long) -> Unit
 ) {
     var showAddDialog by remember { mutableStateOf(false) }
+    var editTarget by remember { mutableStateOf<ChallengeEntity?>(null) }
 
     if (showAddDialog) {
         AddChallengeDialog(
@@ -63,6 +65,17 @@ fun ChallengesScreen(
             onSave = { description ->
                 onAddChallenge(description)
                 showAddDialog = false
+            }
+        )
+    }
+
+    editTarget?.let { target ->
+        EditChallengeDialog(
+            initialText = target.description,
+            onDismiss = { editTarget = null },
+            onSave = { description ->
+                onUpdateChallenge(target.id, description)
+                editTarget = null
             }
         )
     }
@@ -118,7 +131,8 @@ fun ChallengesScreen(
             ) {
                 items(challenges, key = { it.id }) { challenge ->
                     ChallengeItem(
-                        challenge = challenge
+                        challenge = challenge,
+                        onEdit = { editTarget = challenge }
                     )
                 }
             }
@@ -139,7 +153,8 @@ fun ChallengesScreen(
 
 @Composable
 private fun ChallengeItem(
-    challenge: ChallengeEntity
+    challenge: ChallengeEntity,
+    onEdit: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -159,12 +174,90 @@ private fun ChallengeItem(
                     tint = Color(0xFFFF8A00),
                     modifier = Modifier.size(24.dp)
                 )
+                PressableIconButton(onClick = onEdit) {
+                    Icon(
+                        imageVector = Icons.Filled.Edit,
+                        contentDescription = "Editar",
+                        tint = Color(0xFF178B73),
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(6.dp))
             HorizontalDivider(color = Color(0xFFB9B9B9))
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = challenge.description, color = Color(0xFF6A6A6A))
+        }
+    }
+}
+
+@Composable
+private fun EditChallengeDialog(
+    initialText: String,
+    onDismiss: () -> Unit,
+    onSave: (String) -> Unit
+) {
+    var text by remember { mutableStateOf(initialText) }
+
+    Dialog(
+        onDismissRequest = {},
+        properties = DialogProperties(dismissOnClickOutside = false)
+    ) {
+        Column(
+            modifier = Modifier
+                .background(Color.White, RoundedCornerShape(12.dp))
+                .padding(horizontal = 20.dp, vertical = 20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Editar reto",
+                fontWeight = FontWeight.Bold,
+                color = Color.Black,
+                fontSize = 16.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            TextField(
+                value = text,
+                onValueChange = { text = it },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+                textStyle = androidx.compose.ui.text.TextStyle(fontSize = 14.sp),
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color(0xFFFF8A00),
+                    unfocusedIndicatorColor = Color(0xFFFF8A00),
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    disabledContainerColor = Color.Transparent
+                )
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Button(
+                    onClick = onDismiss,
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(4.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF5722))
+                ) {
+                    Text(text = "Cancelar", color = Color.White, fontWeight = FontWeight.Bold)
+                }
+
+                Button(
+                    onClick = { onSave(text) },
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(4.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF5722))
+                ) {
+                    Text(text = "Guardar", color = Color.White, fontWeight = FontWeight.Bold)
+                }
+            }
         }
     }
 }
@@ -252,5 +345,6 @@ private fun AddChallengeDialog(
         }
     }
 }
+
 
 
