@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">App pico botella</string>
+    <string name="share_app_title">App pico botella</string>
+    <string name="share_app_slogan">Solo los valientes lo juegan !!</string>
+    <string name="share_app_url">https://play.google.com/store/apps/details?id=com.nequi.MobileApp&amp;hl=es_419&amp;gl=es</string>
+    <string name="share_chooser_title">Compartir</string>
+</resources>
